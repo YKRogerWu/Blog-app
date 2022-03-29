@@ -65,9 +65,9 @@ app.engine('.hbs', exphbs.engine({extname: '.hbs', //extname: change the default
 app.set('view engine', '.hbs');
 
 cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.CLOUD_API_KEY,
-    api_secret: process.env.CLOUD_API_SECRET,
+    cloud_name: 'dwbnafaji',
+    api_key: '187948162784954',
+    api_secret: 'OqsKW35x7LEzgpAQhW-p2LgJAWc',
     secure: true
 });
 
