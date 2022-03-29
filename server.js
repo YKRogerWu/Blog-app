@@ -73,7 +73,7 @@ cloudinary.config({
 
 
 //define local host port
-const HTTP_PORT = process.env.PORT;
+const HTTP_PORT = process.env.PORT || 8080;
 
 //to return CSS file
 app.use(express.static('public')); 
