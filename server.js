@@ -10,8 +10,6 @@
 *  GitHub Repository URL: https://github.com/YKRogerWu/web322-app.git
 *
 ********************************************************************************/ 
-const env = require('dotenv')
-env.config()
 
 const express = require("express");
 const app = express();
@@ -130,14 +128,8 @@ app.get('/blog', async (req, res) => {
         }
 
         // sort the published posts by postDate
-<<<<<<< HEAD
         posts.sort((a,b) => b.id - a.id);
 
-=======
-        //posts.sort((a,b) => new Date(a.postDate) - new Date(b.postDate));
-        posts.sort((a,b)=> b.id - a.id)
-        
->>>>>>> d6e6a96692513d187b985c431b83ac9bf3e827a2
         // get the latest post from the front of the list (element 0)
         let post = posts[0]; 
 
@@ -228,16 +220,10 @@ app.get("/posts", function(req, res){
     }
     else{
         blog_service.getAllPosts().then((data)=>{
-<<<<<<< HEAD
             //chronologically rearrange the post order
             var rever_data = data.reverse();
 
             res.render("posts",{ posts: rever_data });
-=======
-            //to present posts in reverse chronological order
-            const rev_posts = data.reverse();
-            res.render("posts",{ posts: data });
->>>>>>> d6e6a96692513d187b985c431b83ac9bf3e827a2
         }).catch(function(err){
             res.render("posts.hbs", {message: "no results"}); 
         })
