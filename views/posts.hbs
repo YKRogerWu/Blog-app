@@ -1,0 +1,47 @@
+<div class="row">
+  <div class="col-md-12">
+
+      <h2>Posts<a href="/posts/add" class="btn btn-success pull-right">Add Post</a></h2>
+      <hr>
+
+    <div class="table-responsive">
+
+      <table class="table">
+        <tr>
+          <td>Post ID</td>
+          <td>Title</td>
+          <td>Post Date</td>
+          <td>Category</td>
+          <td>Published</td>
+          <td></td>
+          <td></td>
+        </tr>
+        {{#each posts}}
+            <tr>
+                <td>{{id}}</td>
+                <td><a href="/blog/{{id}}?category={{category}}">{{title}}</a></td>
+                <td>{{#formatDate postDate}}{{/formatDate}}</td>
+               <td><a style="text-decoration: none;" href="/posts?category={{category}}">{{category}}</td>
+                <td>{{published}}</td>
+<<<<<<< HEAD
+                <td>
+                  <a class="btn btn-primary">edit</a>
+                  <a href="posts/delete/{{id}}" class="btn btn-danger">remove</a>
+=======
+                <td><div class="btn btn-primary">Edit</div>&nbsp
+                <a href="posts/delete/{{id}}" class="btn btn-danger">remove</a>
+>>>>>>> d6e6a96692513d187b985c431b83ac9bf3e827a2
+                </td>
+            </tr>
+            {{/each}}
+      </table>
+    </div>
+
+    {{#unless posts}} {{!if there's no posts}}
+    <div class="col-md-12 text-center">
+      <strong>{{message}}</strong>
+    </div>
+    {{/unless}}
+
+  </div>
+</div>
