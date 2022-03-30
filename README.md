@@ -11,7 +11,7 @@ An on-course blog website project, followed by the instructions of the course, W
 | Assignment-3   | 2022-02-20 | Processing Forms with Express.js
 | Assignment-4   | 2022-03-13 | Handlebars View Engine
 | Assignment-5   | 2022-03-29 | Sequelize Operation (Relatinoal Database)
-| Assignment-6   | TBD        | MongoDB Operation with Membership functionality
+| Assignment-6   | TBD        | MongoDB Operation for Membership functionality
 
 ### Assignment-4
 #### Object
