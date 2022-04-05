@@ -108,12 +108,12 @@ module.exports.addPost = function(postData){
     return new Promise((resolve, reject)=>{        
         postData.published = (postData.published) ? true : false;
         
-        //**not sure it should loop through the whole postData ***/
         for(var index in postData){
             if(postData[index]==""){
                 postData[index]=null
             }
         }
+
         postData.postDate = getCurrentFormattedDate();
         Post.create({
             body: postData.body,
@@ -183,7 +183,7 @@ module.exports.getPostsByMinDate = function(minDateStr){
 }
 
 module.exports.getPostById = (id)=>{
-    return new Promise((resolve, reject)=>{        
+    return new Promise((resolve, reject)=>{       
         Post.findAll({
             where:{
                 id: id
@@ -193,6 +193,22 @@ module.exports.getPostById = (id)=>{
         }).catch((error)=>{
             console.log(error)
             reject("no results returned")
+        })
+    })
+}
+
+module.exports.editPostById = (data, id) =>{
+    return new Promise((resolve, reject)=>{
+        Post.update({
+            body: data.body, 
+            title: data.title
+        },{
+            where: {id: id}
+        }).then((data)=>{
+            console.log("Post updated successfully: " + data)
+            resolve(data)
+        }).catch(()=>{
+            reject("Unable to update post")
         })
     })
 }
@@ -248,3 +264,4 @@ module.exports.deletePostById = (id) =>{
         })
     })
 }
+

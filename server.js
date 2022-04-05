@@ -32,6 +32,7 @@ app.use(express.urlencoded({extended: true})); // to stop category add a new ima
 
 const exphbs = require('express-handlebars');
 const { redirect } = require("express/lib/response");
+const { stringify } = require("querystring");
 app.engine('.hbs', exphbs.engine({extname: '.hbs', //extname: change the default ext name from ".handlebars" to ".hbs"
     defaultLayout: 'main', //defaultLayout: the name of the default layout (site's frame) is "main", just made it visible here!
     helpers:{
@@ -261,7 +262,6 @@ app.get("/posts/add", (req, res)=>{
     })
 })
 
-//updated by assignment-3
 app.post("/posts/add", upload.single("featureImage"), (req, res)=>{
 
     let streamUpload = (req) => {
@@ -296,6 +296,27 @@ app.post("/posts/add", upload.single("featureImage"), (req, res)=>{
         })
     });
     
+})
+
+var editting_post_id; //targeting the post which is under edition
+
+app.get("/posts/edit/:id", (req, res)=>{
+    blog_service.getPostById(req.params.id).then((data)=>{
+        editting_post_id = req.params.id
+        res.render("editPost", {post: data})
+    }).catch(()=>{
+        res.status(500).send(error)
+    })
+})
+
+app.post("/posts/edit", (req, res)=>{
+    console.log("the body/title is: " + req.body.body, req.body.title); //req.body cannot be passed correctly
+    blog_service.editPostById(req.body, editting_post_id).then(()=>{
+        res.redirect("/blog/" + editting_post_id)
+        console.log("check point-2: ", req.body)
+    }).catch(()=>{
+        res.status(500).send(error)
+    })
 })
 
 app.get("/categories/add", (req, res)=>{
