@@ -201,7 +201,8 @@ module.exports.editPostById = (data, id) =>{
     return new Promise((resolve, reject)=>{
         Post.update({
             body: data.body, 
-            title: data.title
+            title: data.title,
+            published: data.published
         },{
             where: {id: id}
         }).then((data)=>{

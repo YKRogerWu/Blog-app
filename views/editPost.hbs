@@ -6,7 +6,7 @@
 
         <br />
 
-        <form method="post" action="/posts/edit" enctype="multipart/form-data">
+        <form method="post" action="/posts/edit">
             <fieldset>
                 <legend>Post Content</legend>
                 <div class="row">
@@ -48,7 +48,11 @@
                             <label for="category">Visibility:</label>
                             <div class="checkbox">
                                 <label>
+                                    {{#if post.published}}
                                     <input type="checkbox" checked data-toggle="toggle" data-width="100" data-height="75" name="published" id="published"> Published
+                                    {{else}}
+                                    <input type="checkbox" data-toggle="toggle" data-width="100" data-height="75" name="published" id="published"> Published
+                                    {{/if}}
                                 </label>
                             </div>
                         </div>

@@ -299,21 +299,25 @@ app.post("/posts/add", upload.single("featureImage"), (req, res)=>{
 })
 
 var editting_post_id; //targeting the post which is under edition
+var all_category;
 
 app.get("/posts/edit/:id", (req, res)=>{
+    blog_service.getCategories().then((data)=>{
+        all_category = data;
+    })
+
     blog_service.getPostById(req.params.id).then((data)=>{
         editting_post_id = req.params.id
-        res.render("editPost", {post: data})
+        res.render("editPost", {post: data, categories: all_category})
     }).catch(()=>{
         res.status(500).send(error)
     })
 })
 
 app.post("/posts/edit", (req, res)=>{
-    console.log("the body/title is: " + req.body.body, req.body.title); //req.body cannot be passed correctly
     blog_service.editPostById(req.body, editting_post_id).then(()=>{
         res.redirect("/blog/" + editting_post_id)
-        console.log("check point-2: ", req.body)
+        //console.log("check point: ", req.body)
     }).catch(()=>{
         res.status(500).send(error)
     })
