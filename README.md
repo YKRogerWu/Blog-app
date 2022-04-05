@@ -5,13 +5,13 @@ Quick access to my up-to-date work!
 ### Description
 An on-course blog website project, followed by the instructions of the course, Web Programming Tools and Frameworks (code: WEB322) directed by Professor :man_teacher: Suluxan Mohanraj at Seneca College, winter term 2022
 
-| version        | Release    | Course Progress
+| version        | Release    | Main Content
 | -------------- | -----------| ------------------------ |
-| Assignment-2   | 2022-02-14 | Node.js & JavaScript
-| Assignment-3   | 2022-02-20 | Express.js & Processing Forms with Express.js
-| Assignment-4   | 2022-03-13 | Handlebars.js & Relational Database
-| Assignment-5   | 2022-03-29 | MongoDB & AJAX Programming
-| Assignment-6   | TBD        | Managing State Information, jQuery & Bootstrap Frameworks
+| Assignment-2   | 2022-02-14 | Node.js, Express.js & JavaScript
+| Assignment-3   | 2022-02-20 | Processing Forms with Express.js
+| Assignment-4   | 2022-03-13 | Handlebars View Engine
+| Assignment-5   | 2022-03-29 | Sequelize Operation (Relatinoal Database)
+| Assignment-6   | TBD        | MongoDB Operation for Membership functionality
 
 ### Assignment-4
 #### Object
