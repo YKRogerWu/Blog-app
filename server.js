@@ -31,8 +31,8 @@ const stripJs = require('strip-js');
 app.use(express.urlencoded({extended: true})); // to stop category add a new image <AS-5>
 
 const exphbs = require('express-handlebars');
-const { redirect } = require("express/lib/response");
-const { stringify } = require("querystring");
+const { database } = require("pg/lib/defaults");
+
 app.engine('.hbs', exphbs.engine({extname: '.hbs', //extname: change the default ext name from ".handlebars" to ".hbs"
     defaultLayout: 'main', //defaultLayout: the name of the default layout (site's frame) is "main", just made it visible here!
     helpers:{
@@ -111,50 +111,33 @@ app.get("/about", function(req, res){
 
 app.get('/blog', async (req, res) => {
 
-    // Declare an object to store properties for the view
-    let viewData = {};
+    let viewData = {}
+    let posts = {}
 
     try{
-
-        // declare empty array to hold "post" objects
-        let posts = [];
-
-        // if there's a "category" query, filter the returned posts by category
         if(req.query.category){
-            // Obtain the published "posts" by category
-            posts = await blog_service.getPublishedPostsByCategory(req.query.category).sort();
+            posts = await blog_service.getPublishedPostsByCategory(req.query.category)
         }else{
-            // Obtain the published "posts"
             posts = await blog_service.getPublishedPosts();
         }
-
-        // sort the published posts by postDate
-        posts.sort((a,b) => b.id - a.id);
-
-        // get the latest post from the front of the list (element 0)
-        let post = posts[0]; 
-
-        // store the "posts" and "post" data in the viewData object (to be passed to the view)
-        viewData.posts = posts;
-        viewData.post = post;
+        viewData.posts = posts
+        // sort the published posts by descending postDate
+        viewData.posts.sort((a,b) => b.id - a.id);
+        // set the newest post to display
+        viewData.post = viewData.posts[0];
 
     }catch(err){
         viewData.message = "no results";
     }
 
     try{
-        // Obtain the full list of "categories"
         let categories = await blog_service.getCategories();
-
-        // store the "categories" data in the viewData object (to be passed to the view)
         viewData.categories = categories;
     }catch(err){
         viewData.categoriesMessage = "no results"
     }
 
-    // render the "blog" view with all of the data (viewData)
     res.render("blog", {data: viewData})
-
 });
 
 app.get('/blog/:id', async (req, res) => {
@@ -299,25 +282,45 @@ app.post("/posts/add", upload.single("featureImage"), (req, res)=>{
 })
 
 var editting_post_id; //targeting the post which is under edition
-var all_category;
 
-app.get("/posts/edit/:id", (req, res)=>{
-    blog_service.getCategories().then((data)=>{
-        all_category = data;
-    })
+app.get("/posts/edit/:id", async (req, res)=>{
+    let viewData = {} 
 
     blog_service.getPostById(req.params.id).then((data)=>{
-        editting_post_id = req.params.id
-        res.render("editPost", {post: data, categories: all_category})
+        if(data){
+            editting_post_id = data.id
+            viewData.post = data;
+        }
+        else{
+            viewData.post = null;
+        }
     }).catch(()=>{
-        res.status(500).send(error)
+        viewData.post = null;
+    }).then(blog_service.getCategories).then((data)=>{
+        viewData.categories = data
+        for(let i = 0; i < viewData.categories.length; i++){
+            if(viewData.categories[i].id == viewData.post.category){
+                //**to offer the "selected" attribute in HTML 
+                viewData.categories[i].selected = true; 
+            }
+        }
+    }).catch(()=>{
+        viewData.categories = [];
+    }).then(()=>{
+        if(viewData.post == null){
+            res.status(404).send("Post not found")
+        }
+        else{
+            console.log("viewData:", viewData)
+            res.render("editPost.hbs", {viewData: viewData})
+        }
     })
 })
 
 app.post("/posts/edit", (req, res)=>{
     blog_service.editPostById(req.body, editting_post_id).then(()=>{
         res.redirect("/blog/" + editting_post_id)
-        //console.log("check point: ", req.body)
+        console.log("check point: ", req.body)
     }).catch(()=>{
         res.status(500).send(error)
     })

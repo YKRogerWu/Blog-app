@@ -13,7 +13,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="title">Title:</label>
-                            <input class="form-control" id="title" name="title" type="text" value="{{post.title}}"/>
+                            <input class="form-control" id="title" name="title" type="text" value="{{viewData.post.title}}"/>
                         </div>
                     </div>
                 </div>
@@ -21,7 +21,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="body">Body:</label>
-                            <textarea class="form-control" id="body" name="body" rows=15>{{post.body}}</textarea>
+                            <textarea class="form-control" id="body" name="body" rows=15>{{viewData.post.body}}</textarea>
                         </div>
                     </div>
                 </div>
@@ -30,11 +30,11 @@
                         <div class="form-group">
                             <label for="category">Category:</label>
 
-                            {{#if categories}}
+                            {{#if viewData.categories}}
                             <select class="form-control" name="category" id="category">
                                 <option value="">Select Category</option>
-                                {{#each categories}}
-                                <option value="{{id}}">{{category}}</option>
+                                {{#each viewData.categories}}
+                                <option value="{{id}}" {{#if selected}} selected {{/if}}>{{category}}</option>
                                 {{/each}}
                             </select>
                             {{else}}
@@ -48,7 +48,7 @@
                             <label for="category">Visibility:</label>
                             <div class="checkbox">
                                 <label>
-                                    {{#if post.published}}
+                                    {{#if viewData.post.published}}
                                     <input type="checkbox" checked data-toggle="toggle" data-width="100" data-height="75" name="published" id="published"> Published
                                     {{else}}
                                     <input type="checkbox" data-toggle="toggle" data-width="100" data-height="75" name="published" id="published"> Published

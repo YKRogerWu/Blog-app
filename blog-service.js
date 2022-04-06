@@ -202,7 +202,8 @@ module.exports.editPostById = (data, id) =>{
         Post.update({
             body: data.body, 
             title: data.title,
-            published: data.published
+            category: data.category,
+            published: data.published? true: false
         },{
             where: {id: id}
         }).then((data)=>{
