@@ -13,10 +13,10 @@
             <br /><br />
         </article>
         {{else}}
-            <div class="col-md-12 text-center">
-                <h2>{{data.message}}</h2>
-                <p>Please try another Post / Category</p> 
-            </div>
+        <div class="alert alert-warning col-md-12 text-center" role="alert">
+            <h3>{{data.message}}</h3>
+            <p>Please try another Post / Category</p>
+        </div>
         {{/if}}
     </section>
 

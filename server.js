@@ -172,7 +172,6 @@ app.get('/blog/:id', async (req, res) => {
     try{
         // Obtain the post by "id"
         viewData.post = await blog_service.getPostById(req.params.id);
-        
     }catch(err){
         viewData.message = "no results"; 
     }
@@ -285,7 +284,7 @@ var editting_post_id; //targeting the post which is under edition
 app.get("/posts/edit/:id", async (req, res)=>{
     let viewData = {} 
 
-    blog_service.getPostById(req.params.id).then((data)=>{
+    blog_service.getEdittedPostById(req.params.id).then((data)=>{
         if(data){
             editting_post_id = data.id
             viewData.post = data;
@@ -352,7 +351,7 @@ app.get("/posts/delete/:id", (req, res)=>{
 
 //no matching route (404 route)
 app.get('*', function(req, res){
-    var errMessage = { message_404: "Sorry"};
+    var errMessage = { message_404: "Sorry, the page you requested does not exist."};
     res.render("status-404.hbs", {
         msg: errMessage
     });

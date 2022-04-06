@@ -67,6 +67,10 @@ module.exports.getPublishedPosts= function() {
                 published: true
             }
         }).then((posts)=>{
+             //Visualize newline break on view engine
+             for(let i = 0; i < posts.length; i++){
+                 posts[i].body = posts[i].body.replaceAll("\n", "</br>")
+             }
             resolve(posts)
         }).catch((error)=>{
             console.log(error)
@@ -189,7 +193,23 @@ module.exports.getPostById = (id)=>{
                 id: id
             }
         }).then((post)=>{
-            post[0].body = post[0].body.replace("\n", "<br>")
+            //Visualize newline break on view engine
+            post[0].body = post[0].body.replaceAll("\n", "</br>")
+            resolve(post[0])
+        }).catch((error)=>{
+            console.log(error)
+            reject("no results returned")
+        })
+    })
+}
+
+module.exports.getEdittedPostById = (id)=>{
+    return new Promise((resolve, reject)=>{       
+        Post.findAll({
+            where:{
+                id: id
+            }
+        }).then((post)=>{   
             resolve(post[0])
         }).catch((error)=>{
             console.log(error)
