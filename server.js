@@ -136,7 +136,6 @@ app.get('/blog', async (req, res) => {
     }catch(err){
         viewData.categoriesMessage = "no results"
     }
-
     res.render("blog", {data: viewData})
 });
 
@@ -164,6 +163,7 @@ app.get('/blog/:id', async (req, res) => {
 
         // store the "posts" and "post" data in the viewData object (to be passed to the view)
         viewData.posts = posts;
+        
 
     }catch(err){
         viewData.message = "no results";
@@ -172,20 +172,19 @@ app.get('/blog/:id', async (req, res) => {
     try{
         // Obtain the post by "id"
         viewData.post = await blog_service.getPostById(req.params.id);
+        
     }catch(err){
         viewData.message = "no results"; 
     }
-
+    
     try{
         // Obtain the full list of "categories"
         let categories = await blog_service.getCategories();
-
         // store the "categories" data in the viewData object (to be passed to the view)
         viewData.categories = categories;
     }catch(err){
         viewData.categoriesMessage = "no results"
     }
-
     // render the "blog" view with all of the data (viewData)
     res.render("blog.hbs", {data: viewData})
 });
@@ -311,7 +310,6 @@ app.get("/posts/edit/:id", async (req, res)=>{
             res.status(404).send("Post not found")
         }
         else{
-            console.log("viewData:", viewData)
             res.render("editPost.hbs", {viewData: viewData})
         }
     })
@@ -320,7 +318,6 @@ app.get("/posts/edit/:id", async (req, res)=>{
 app.post("/posts/edit", (req, res)=>{
     blog_service.editPostById(req.body, editting_post_id).then(()=>{
         res.redirect("/blog/" + editting_post_id)
-        console.log("check point: ", req.body)
     }).catch(()=>{
         res.status(500).send(error)
     })
