@@ -188,8 +188,9 @@ module.exports.getPostById = (id)=>{
             where:{
                 id: id
             }
-        }).then((posts)=>{
-            resolve(posts[0])
+        }).then((post)=>{
+            post[0].body = post[0].body.replace("\n", "<br>")
+            resolve(post[0])
         }).catch((error)=>{
             console.log(error)
             reject("no results returned")
