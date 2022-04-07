@@ -36,7 +36,9 @@
         <h4>Categories</h4>
         <ul class="list-group">
             {{#each data.categories}}
-            <a href="/blog?category={{id}}" class="list-group-item">{{category}}</a>
+                <a href="/blog?category={{id}}" class="list-group-item">
+                {{category}}{{#if postNo}} <span class="badge bg-primary">{{postNo}}</span>{{/if}}
+                </a>
             {{/each}}
         </ul>
         {{/if}}

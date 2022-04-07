@@ -113,7 +113,7 @@ app.get('/blog', async (req, res) => {
 
     let viewData = {}
     let posts = {}
-
+    let noOfCate;
     try{
         if(req.query.category){
             posts = await blog_service.getPublishedPostsByCategory(req.query.category)
@@ -135,6 +135,18 @@ app.get('/blog', async (req, res) => {
         viewData.categories = categories;
     }catch(err){
         viewData.categoriesMessage = "no results"
+    }
+
+    for (var i = 0; i < viewData.categories.length; i++) 
+    {
+        var accu = 0;
+
+        for (var j = 0; j < viewData.posts.length; j++) 
+        {
+            if(viewData.posts[j].category == viewData.categories[i].id)
+                accu++;
+        }
+        viewData.categories[i].postNo = accu
     }
     res.render("blog", {data: viewData})
 });
