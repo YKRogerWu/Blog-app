@@ -1,3 +1,15 @@
+/*********************************************************************************
+*  WEB322 – Assignment 06
+*  I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part *  of this assignment has been copied manually or electronically from any other source 
+*  (including 3rd party web sites) or distributed to other students.
+* 
+*  Name: Roger Wu, Student ID: 146740204, Date: April 14, 2022
+*
+*  Online (Heroku) URL: https://tranquil-scrubland-87036.herokuapp.com/
+*
+*  GitHub Repository URL: https://github.com/YKRogerWu/web322-app.git
+*
+********************************************************************************/ 
 
 const Sequelize = require('sequelize');
 
@@ -32,8 +44,6 @@ var posts = [];
 var categories = [];
 
 var fs = require("fs");
-const { promisify } = require('util');
-//const { resolve } = require('path');
 
 //initializer
 module.exports.initialize = function(){

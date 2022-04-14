@@ -1,9 +1,9 @@
 /*********************************************************************************
-*  WEB322 – Assignment 05
+*  WEB322 – Assignment 06
 *  I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part *  of this assignment has been copied manually or electronically from any other source 
 *  (including 3rd party web sites) or distributed to other students.
 * 
-*  Name: Roger Wu, Student ID: 146740204, Date: March 29, 2022
+*  Name: Roger Wu, Student ID: 146740204, Date: April 14, 2022
 *
 *  Online (Heroku) URL: https://tranquil-scrubland-87036.herokuapp.com/
 *
@@ -12,26 +12,55 @@
 ********************************************************************************/ 
 
 const express = require("express");
+const path = require("path")
+
+//load external files
+const blog_service = require("./blog-service");
+const authData = require("./auth-server")
+
+const env = require('dotenv')
+
 const app = express();
 
 //use env variable file
-const env = require('dotenv')
 env.config()
 
-const path = require("path");
-const blog_service = require("./blog-service");
-
+const exphbs = require('express-handlebars');
 const multer = require("multer"); // to deal with image upload
+
 const upload = multer(); // no { storage: storage } since we are not using disk storage
 
+//setup express-session management
+const clientSessions = require("client-sessions")
+
+app.use(clientSessions({
+    cookieName: "session",
+    secret:"web322-RogerWu-AS06",
+    duration: 1000 * 60 * 15,       // 15 min
+    activeDuration: 1000 * 60 * 5,  // 5 min each request
+    //saveUninitialized: true
+}))
+
+//session middleware
+app.use(function(req, res, next) {
+    res.locals.session = req.session;
+    next();
+  });
+
+function ensureLogin(req, res, next) {
+    if (!req.session.user)
+        res.redirect("/login");
+    else
+        next();
+  }
+
+
 const cloudinary = require('cloudinary').v2;
-const streamifier = require('streamifier');
+const streamifier = require('streamifier')
 
 const stripJs = require('strip-js');
 app.use(express.urlencoded({extended: true})); // to stop category add a new image <AS-5>
 
-const exphbs = require('express-handlebars');
-const { database } = require("pg/lib/defaults");
 
 app.engine('.hbs', exphbs.engine({extname: '.hbs', //extname: change the default ext name from ".handlebars" to ".hbs"
     defaultLayout: 'main', //defaultLayout: the name of the default layout (site's frame) is "main", just made it visible here!
@@ -72,7 +101,6 @@ cloudinary.config({
     secure: true
 });
 
-
 //define local host port
 const HTTP_PORT = process.env.PORT || 8080;
 
@@ -80,12 +108,11 @@ const HTTP_PORT = process.env.PORT || 8080;
 app.use(express.static('public')); 
 
 function onHttpStart(){
-    console.log("Express http server listening on:", HTTP_PORT)
     return new Promise(function(req, res){
-        blog_service.initialize().then(function(data){
-            console.log(data)
+        blog_service.initialize().then(authData.initialize).then((data)=>{
+            console.log("app listening on: ", HTTP_PORT)
         }).catch(function(err){
-            console.log(err);
+            console.log("unable to start server: ", err);
         })
     })
 }
@@ -97,7 +124,6 @@ app.use(function(req,res,next){
     app.locals.viewingCategory = req.query.category;
     next();
 });
-
 
 
 //routing
@@ -200,7 +226,7 @@ app.get('/blog/:id', async (req, res) => {
     res.render("blog.hbs", {data: viewData})
 });
 
-app.get("/posts", function(req, res){
+app.get("/posts", ensureLogin, function(req, res){
 
     if(req.query.category){
         blog_service.getPostsByCategory(req.query.category).then((data)=>{
@@ -217,24 +243,23 @@ app.get("/posts", function(req, res){
             //chronologically rearrange the post order
             var rever_data = data.reverse();
 
-            res.render("posts",{ posts: rever_data });
+            res.render("posts",{ posts: rever_data});
         }).catch(function(err){
             res.render("posts.hbs", {message: "no results"}); 
         })
     }
 });
 
-app.get("/post/:id", (req, res)=>{
+app.get("/post/:id", ensureLogin, (req, res)=>{
     blog_service.getPostById(req.params.id).then((data)=>{
         res.json(data)
     }).catch((error)=>{
         console.log(error)
         res.status(404).sendFile(path.join(__dirname,"./views/status-404.html"))
     })
-    
 })
 
-app.get("/categories", function(req, res){
+app.get("/categories", ensureLogin, (req, res)=>{
     blog_service.getCategories().then((data)=>{
         if(data[0]){
             res.render("categories", {categories: data})
@@ -247,7 +272,7 @@ app.get("/categories", function(req, res){
     });
 });
 
-app.get("/posts/add", (req, res)=>{
+app.get("/posts/add", ensureLogin, (req, res)=>{
     blog_service.getCategories().then((data)=>{
         res.render("addPost", {categories: data});
     }).catch((error)=>{
@@ -255,7 +280,7 @@ app.get("/posts/add", (req, res)=>{
     })
 })
 
-app.post("/posts/add", upload.single("featureImage"), (req, res)=>{
+app.post("/posts/add", ensureLogin, upload.single("featureImage"), (req, res)=>{
 
     let streamUpload = (req) => {
         return new Promise((resolve, reject) => {
@@ -293,7 +318,7 @@ app.post("/posts/add", upload.single("featureImage"), (req, res)=>{
 
 var editting_post_id; //targeting the post which is under edition
 
-app.get("/posts/edit/:id", async (req, res)=>{
+app.get("/posts/edit/:id", ensureLogin, async (req, res)=>{
     let viewData = {} 
 
     blog_service.getEdittedPostById(req.params.id).then((data)=>{
@@ -326,7 +351,7 @@ app.get("/posts/edit/:id", async (req, res)=>{
     })
 })
 
-app.post("/posts/edit", (req, res)=>{
+app.post("/posts/edit", ensureLogin, (req, res)=>{
     blog_service.editPostById(req.body, editting_post_id).then(()=>{
         res.redirect("/blog/" + editting_post_id)
     }).catch(()=>{
@@ -334,18 +359,18 @@ app.post("/posts/edit", (req, res)=>{
     })
 })
 
-app.get("/categories/add", (req, res)=>{
+app.get("/categories/add", ensureLogin, (req, res)=>{
     res.render("addCategory.hbs");
 })
 
-app.post("/categories/add", (req, res)=>{
+app.post("/categories/add", ensureLogin, (req, res)=>{
         
     blog_service.addCategory(req.body).then((data)=>{
         res.redirect("/categories");
     })
 })
 
-app.get("/categories/delete/:id", (req, res)=>{
+app.get("/categories/delete/:id", ensureLogin, (req, res)=>{
     blog_service.deleteCategoryById(req.params.id).then(()=>{
         res.redirect("/categories")
     }).catch(()=>{
@@ -353,12 +378,59 @@ app.get("/categories/delete/:id", (req, res)=>{
     })
 })
 
-app.get("/posts/delete/:id", (req, res)=>{
+app.get("/posts/delete/:id", ensureLogin, (req, res)=>{
     blog_service.deletePostById(req.params.id).then(()=>{
         res.redirect("/posts")
     }).catch(()=>{
         res.status(500).render("posts", {message: "Unable to Remove Post / Post not found"})
     })
+})
+
+app.get("/login", (req, res)=>{
+    res.render("login");
+})
+
+app.get("/register",(req, res)=>{
+    res.render("register")
+})
+
+app.post("/register", (req, res)=>{
+    //console.log("returned user name data:", req.body)
+    authData.registerUser(req.body)
+    .then(()=>{
+        res.render("register", {successMessage: "User created"})
+    })
+    .catch((err)=>{
+        console.log("Error", err)
+        res.render("register", {errorMessage: err, userName: req.body.userName} )
+    })
+})
+
+app.post("/login", (req, res)=>{
+
+    req.body.userAgent = req.get('User-Agent');
+
+    authData.checkUser(req.body)
+    .then((user) => {
+        req.session.user = {
+            userName: user.userName,// authenticated user's userName
+            email: user.email,      // authenticated user's email
+            loginHistory: user.loginHistory// authenticated user's loginHistory  
+        }   
+        res.redirect("/posts");
+
+    }).catch((err)=>{
+        res.render('login', {errorMessage: err, userName: req.body.userName})
+    })
+})
+
+app.get("/logout", (req, res)=>{
+    req.session.reset();
+    res.redirect("/")
+})
+
+app.get("/userHistory", ensureLogin, (req, res)=>{
+    res.render("userHistory");
 })
 
 //no matching route (404 route)
