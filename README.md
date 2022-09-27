@@ -1,4 +1,4 @@
-# Web322-app
+# Blog-App
 Quick access to my up-to-date work!
 <br/>Take a look :point_right: :point_right: https://tranquil-scrubland-87036.herokuapp.com/
 
