@@ -1,6 +1,6 @@
 # Web322-app
 Quick access to my up-to-date work!
-<br/>Click here:point_right::point_right: https://tranquil-scrubland-87036.herokuapp.com/
+<br/>Take a look :point_right: :point_right: https://tranquil-scrubland-87036.herokuapp.com/
 
 ### Description
 An on-course blog website project, followed by the instructions of the course, Web Programming Tools and Frameworks (code: WEB322) directed by Professor :man_teacher: Suluxan Mohanraj at Seneca College, winter term 2022
